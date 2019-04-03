@@ -34,7 +34,7 @@ void callSorts(int* originalData)
                     unsigned  size, 
                     unsigned* swaps);
 
-    void insertionSort(int**     intArray, 
+    void selectionSort(int**     intArray, 
                        unsigned  size,
                        unsigned* swaps);
 
@@ -49,10 +49,9 @@ void callSorts(int* originalData)
     printf("- ORIGINAL DATA -\n");
     printCopyArray(copyArray, ARRAYSIZE);
     putchar('\n');
-
-    bubbleSort(copyArray, ARRAYSIZE, &swapCount);
     
     printf("- BUBBLE SORT -\n");
+    bubbleSort(copyArray, ARRAYSIZE, &swapCount);
     printCopyArray(copyArray, ARRAYSIZE);
     printf("Swaps performed: %u\n", swapCount);
     putchar('\n');
@@ -62,12 +61,16 @@ void callSorts(int* originalData)
     for (unsigned i = 0u; i < ARRAYSIZE; i++)
         copyArray[i] = &originalData[i];
     
-    insertionSort(copyArray, ARRAYSIZE, &swapCount);
-    
-    printf("- INSERTION SORT -\n");
+    printf("- SELECTION SORT -\n");
+    selectionSort(copyArray, ARRAYSIZE, &swapCount);
     printCopyArray(copyArray, ARRAYSIZE);
     printf("Swaps performed: %u\n", swapCount);
     putchar('\n');
+    
+    // reset the copyArray and the swapCount;
+    swapCount = 0;
+    for (unsigned i = 0u; i < ARRAYSIZE; i++)
+        copyArray[i] = &originalData[i];
 }
 
 /******************************************************
@@ -110,7 +113,7 @@ void bubbleSort(int** intArray, unsigned size, unsigned* swaps)
   This function builds the sorted list one
   element at a time, starting from the beginning.
 *************************************************/
-void insertionSort(int** intArray, unsigned size, unsigned* swaps)
+void selectionSort(int** intArray, unsigned size, unsigned* swaps)
 {
     unsigned swapCount = 0,
              mindex;
