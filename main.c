@@ -7,7 +7,7 @@ void swap(int** A, int** B);
 void printCopyArray(int** intArrayCopy, unsigned const size);
 
 
-const unsigned ARRAYSIZE = 10;
+const unsigned ARRAYSIZE = 20;
 
 int main (void)
 {
@@ -16,7 +16,7 @@ int main (void)
     // Populate the coreData
     int coreData[ARRAYSIZE];
     for (unsigned i = 0u; i < ARRAYSIZE; i++)
-        coreData[i] = rand() % 50;
+        coreData[i] = rand() % 200;
 
     callSorts(coreData);
     
@@ -35,6 +35,10 @@ void callSorts(int* originalData)
                     unsigned* swaps);
 
     void selectionSort(int**     intArray, 
+                       unsigned  size,
+                       unsigned* swaps);
+    
+    void insertionSort(int**     intArray, 
                        unsigned  size,
                        unsigned* swaps);
 
@@ -71,6 +75,12 @@ void callSorts(int* originalData)
     swapCount = 0;
     for (unsigned i = 0u; i < ARRAYSIZE; i++)
         copyArray[i] = &originalData[i];
+    
+    printf("- INSERTION SORT -\n");
+    insertionSort(copyArray, ARRAYSIZE, &swapCount);
+    printCopyArray(copyArray, ARRAYSIZE);
+    printf("Swaps performed: %u\n", swapCount);
+    putchar('\n');
 }
 
 /******************************************************
@@ -94,7 +104,7 @@ void printCopyArray(int** intArrayCopy, unsigned const size)
 ************************************************/
 void bubbleSort(int** intArray, unsigned size, unsigned* swaps)
 {
-    unsigned swapCount = 0;
+    unsigned swapCount = 0u;
     for (unsigned j = 0; j < size - 1; j++)
     {
         for (unsigned k = 0 ; k < size - (j + 1); k++)
@@ -115,8 +125,8 @@ void bubbleSort(int** intArray, unsigned size, unsigned* swaps)
 *************************************************/
 void selectionSort(int** intArray, unsigned size, unsigned* swaps)
 {
-    unsigned swapCount = 0,
-             mindex;
+    unsigned mindex,
+             swapCount = 0u;
     for (unsigned j = 0; j < size - 1; j++)
     {
         mindex = j;
@@ -134,6 +144,30 @@ void selectionSort(int** intArray, unsigned size, unsigned* swaps)
     *swaps = swapCount;
 }
 
+/****************************************************
+  Looks like this insertion sort will require more
+  swaps, by virtue of all the shifting that has to
+  occur. 
+****************************************************/
+void insertionSort(int** intArray, unsigned size, unsigned* swaps)
+{
+    unsigned swapCount = 0u;
+    int* key; 
+    for (unsigned i = 1; i < size; i++)
+    {
+        key = intArray[i];
+        int j = i - 1;
+        while (j >= 0 && *(intArray[j]) > *key)
+        {
+            swap(&intArray[j + 1], &intArray[j]);
+            swapCount++;
+            j--;
+        }
+        intArray[j + 1] = key;
+    }
+    *swaps = swapCount;
+}
+                       
 /****************************************************
     This function is intended to be compatible with 
     various different sorts, not just a bubble sort.
