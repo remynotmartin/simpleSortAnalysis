@@ -1,16 +1,55 @@
 #include <stdio.h>
+#include <string.h> // for memcpy()
+#include <stdlib.h> // for srand()
 #include <time.h>
 
-void bubbleSort(int* intArray, unsigned const size);
+
+// Utilities
+void callSorts(int* originalData);
 void printArray(int* intArray, unsigned const size);
 void swap(int* A, int* B);
 
-#define ARRAYSIZE = 15
+// Sorting Algorithms
+unsigned bubbleSort(int* intArray, unsigned size);
+
+const unsigned ARRAYSIZE = 10;
 
 int main (void)
 {
     srand(time(0)); // Seeds the PRNG
+
+    // Initialize the array with data
+    int myArray[ARRAYSIZE];
+    for (unsigned i = 0u; i < ARRAYSIZE; i++)
+        myArray[i] = rand() % 50;
+
+    callSorts(myArray);
+    
     return 0;
+}
+
+/************************************************
+  Encapsulates calls to the sorts so that main
+  remains relatively clean and short =)
+************************************************/
+void callSorts(int* originalData)
+{    
+    // Initialize a copy of the original data, to maintain data integrity.
+    int copyA[ARRAYSIZE];
+    memcpy(copyA, originalData, ARRAYSIZE * sizeof(int));
+
+    unsigned swapCount = 0;
+
+    printf("- ORIGINAL ARRAY -\n");
+    printArray(originalData, ARRAYSIZE);
+    putchar('\n');
+
+    swapCount = bubbleSort(copyA, ARRAYSIZE);
+    
+    printf("- Bubble SORTED -\n");
+    printArray(copyA, ARRAYSIZE);
+    printf("Swaps performed: %u\n", swapCount);
+    putchar('\n');
 }
 
 /************************************************
@@ -18,10 +57,21 @@ int main (void)
    Applies a bubble sort, and prints out number
    of swaps applied to the data set.
 ************************************************/
-void bubbleSort(int* intArray, unsigned const size)
+unsigned bubbleSort(int* intArray, unsigned size)
 {
     unsigned swapCount = 0;
-    for (
+    for (unsigned j = 0; j < size - 1; j++)
+    {
+        for (unsigned k = 0 ; k < size - (j + 1); k++)
+        {
+            if (intArray[k] > intArray[k + 1])
+            {
+                swap(&intArray[k], &intArray[k + 1]);
+                swapCount++;
+            }
+        }
+    }
+    return swapCount;
 }
 
 /******************************************************
@@ -29,7 +79,6 @@ void bubbleSort(int* intArray, unsigned const size)
 ******************************************************/
 void printArray(int* intArray, unsigned const size)
 {
-    printf("Array: ");
     for (unsigned i = 0u; i < size; i++)
         printf("%d ", intArray[i]);
     putchar('\n');
