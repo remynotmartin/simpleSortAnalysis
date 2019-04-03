@@ -2,13 +2,10 @@
 #include <stdlib.h> // for srand()
 #include <time.h>
 
-
-// Utilities
 void callSorts(int* originalData);
 void swap(int** A, int** B);
+void printCopyArray(int** intArrayCopy, unsigned const size);
 
-// Sorting Algorithms
-unsigned bubbleSort(int** intArray, unsigned size);
 
 const unsigned ARRAYSIZE = 10;
 
@@ -16,7 +13,7 @@ int main (void)
 {
     srand(time(0)); // Seeds the PRNG
 
-    // Initialize the array with data
+    // Populate the coreData
     int coreData[ARRAYSIZE];
     for (unsigned i = 0u; i < ARRAYSIZE; i++)
         coreData[i] = rand() % 50;
@@ -32,24 +29,43 @@ int main (void)
 ************************************************/
 void callSorts(int* originalData)
 {    
-    void printCopyArray(int** intArrayCopy, unsigned const size);
+    // Sorting Algorithms
+    void bubbleSort(int**     intArray,
+                    unsigned  size, 
+                    unsigned* swaps);
+
+    void insertionSort(int**     intArray, 
+                       unsigned  size,
+                       unsigned* swaps);
 
     // Initialize a copy of the original data, 
     // to maintain its integrity.
-    int* copyA[ARRAYSIZE];
-    unsigned swapCount = 0;
+    int* copyArray[ARRAYSIZE];
     for (unsigned i = 0u; i < ARRAYSIZE; i++)
-        copyA[i] = &originalData[i];
+        copyArray[i] = &originalData[i];
+    
+    unsigned swapCount = 0;
 
-
-    printf("- ORIGINAL DATA-\n");
-    printCopyArray(copyA, ARRAYSIZE);
+    printf("- ORIGINAL DATA -\n");
+    printCopyArray(copyArray, ARRAYSIZE);
     putchar('\n');
 
-    swapCount = bubbleSort(copyA, ARRAYSIZE);
+    bubbleSort(copyArray, ARRAYSIZE, &swapCount);
     
-    printf("- Bubble SORTED -\n");
-    printCopyArray(copyA, ARRAYSIZE);
+    printf("- BUBBLE SORT -\n");
+    printCopyArray(copyArray, ARRAYSIZE);
+    printf("Swaps performed: %u\n", swapCount);
+    putchar('\n');
+    
+    // reset the copyArray and the swapCount;
+    swapCount = 0;
+    for (unsigned i = 0u; i < ARRAYSIZE; i++)
+        copyArray[i] = &originalData[i];
+    
+    insertionSort(copyArray, ARRAYSIZE, &swapCount);
+    
+    printf("- INSERTION SORT -\n");
+    printCopyArray(copyArray, ARRAYSIZE);
     printf("Swaps performed: %u\n", swapCount);
     putchar('\n');
 }
@@ -71,8 +87,9 @@ void printCopyArray(int** intArrayCopy, unsigned const size)
    Function takes integer array and its size.
    Applies a bubble sort, and prints out number
    of swaps applied to the data set.
+   The classic n00b sort~
 ************************************************/
-unsigned bubbleSort(int** intArray, unsigned size)
+void bubbleSort(int** intArray, unsigned size, unsigned* swaps)
 {
     unsigned swapCount = 0;
     for (unsigned j = 0; j < size - 1; j++)
@@ -86,7 +103,32 @@ unsigned bubbleSort(int** intArray, unsigned size)
             }
         }
     }
-    return swapCount;
+    *swaps = swapCount;
+}
+
+/*************************************************
+  This function builds the sorted list one
+  element at a time, starting from the beginning.
+*************************************************/
+void insertionSort(int** intArray, unsigned size, unsigned* swaps)
+{
+    unsigned swapCount = 0,
+             mindex;
+    for (unsigned j = 0; j < size - 1; j++)
+    {
+        mindex = j;
+        for (unsigned k = j + 1; k < size; k++)
+        {
+            if (*(intArray[k]) < *(intArray[mindex]))
+                mindex = k;
+        }
+        if (mindex != j)
+        {
+            swap(&intArray[j], &intArray[mindex]);
+            swapCount++;
+        }
+    }
+    *swaps = swapCount;
 }
 
 /****************************************************
